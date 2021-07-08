@@ -7,13 +7,18 @@ class InsertionSort extends BaseAlgorithm {
 
   @override
   Future<void> start() async {
-    for (int i = 0; i < this.cubit.state.integers.length - 1; i++) {
-      for (int j = i + 1; j < this.cubit.state.integers.length; j++) {
+    for (int i = 1; i < this.cubit.state.integers.length; i++) {
+      int j = i;
+
+      while (j > 0) {
         this.cubit.emitComparisonState(comparisonIndices: [i, j]);
         await Future.delayed(this.cubit.state.executionDelay);
 
-        if (this.cubit.state.integers[i] > this.cubit.state.integers[j]) {
-          this.swapArrayElements(i: i, j: j);
+        if (this.cubit.state.integers[j] < this.cubit.state.integers[j - 1]) {
+          this.swapArrayElements(i: j, j: j - 1);
+          j--;
+        } else {
+          break;
         }
 
         if (await this.stateListener()) {

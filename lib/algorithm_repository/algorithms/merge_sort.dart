@@ -4,12 +4,15 @@ import 'package:meta/meta.dart';
 
 class MergeSort extends BaseAlgorithm {
   MergeSort({@required AlgorithmCubit cubit}) : super(cubit: cubit);
+  bool algorithmStopped = false;
 
   @override
   Future<void> start() async {
     await this.mergeSort(
         this.cubit.state.integers, 0, this.cubit.state.integers.length - 1);
-    super.start();
+    if (!algorithmStopped) {
+      super.start();
+    }
   }
 
   int nextGap(gap) {
@@ -24,6 +27,7 @@ class MergeSort extends BaseAlgorithm {
     if (await this.stateListener()) {
       this.cubit.update();
     } else {
+      algorithmStopped = true;
       return null;
     }
     int gap = end - start + 1;
@@ -42,6 +46,7 @@ class MergeSort extends BaseAlgorithm {
         if (await this.stateListener()) {
           this.cubit.update();
         } else {
+          algorithmStopped = true;
           return null;
         }
 
@@ -56,6 +61,7 @@ class MergeSort extends BaseAlgorithm {
     if (await this.stateListener()) {
       this.cubit.update();
     } else {
+      algorithmStopped = true;
       return null;
     }
     if (l < r) {

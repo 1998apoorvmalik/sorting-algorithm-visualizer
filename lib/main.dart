@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import "package:flutter/material.dart";
 
 void main() => runApp(MaterialApp(
+    theme: ThemeData.light().copyWith(
+      primaryColor: Colors.amber,
+      buttonColor: Colors.amber,
+    ),
     debugShowCheckedModeBanner: false,
     home: Scaffold(body: SortingAlgorithmsVisualizerApp())));
 
@@ -16,8 +20,8 @@ class SortingAlgorithmsVisualizerApp extends StatelessWidget {
         color: Colors.black,
         child: Column(
           children: [
-            Expanded(
-              flex: 10,
+            Flexible(
+              flex: 3,
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) =>
                     Visualizer(
@@ -25,8 +29,8 @@ class SortingAlgorithmsVisualizerApp extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
+            Flexible(
+              flex: 1,
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) =>
                     Controller(

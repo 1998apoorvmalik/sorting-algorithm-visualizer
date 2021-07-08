@@ -20,9 +20,9 @@ class _VisualizerState extends State<Visualizer> {
     this.widget.integerDisplayArray.clear();
 
     List<Color> tileColors = [
-      Colors.greenAccent,
-      Colors.redAccent,
-      Colors.blueAccent,
+      Colors.blueGrey,
+      Colors.purpleAccent,
+      Colors.pinkAccent,
     ];
 
     int i = 0;
@@ -35,7 +35,7 @@ class _VisualizerState extends State<Visualizer> {
 
         this.widget.integerDisplayArray.add(
               Container(
-                color: Colors.purpleAccent,
+                color: Colors.amberAccent,
                 height: elementHeight,
                 width: elementWidth,
               ),

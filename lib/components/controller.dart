@@ -18,11 +18,12 @@ class _ControllerState extends State<Controller> {
   double _currentExecutionSpeedSliderValue;
   double _currentBarNumberSliderValue;
   List<Widget> _algorithmsSelectionNames = [];
+  int _selectedAlgorithmIndex = 0;
 
   @override
   void initState() {
     AlgorithmType.values.forEach((element) {
-      String value = element.toString().split('.')[1].split('S').join(" S");
+      String value = element.toString().split('.')[1];
       _algorithmsSelectionNames.add(
         Center(
           child: Text(
@@ -37,154 +38,151 @@ class _ControllerState extends State<Controller> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return BlocBuilder<AlgorithmCubit, AlgorithmState>(
         builder: (context, state) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Flexible(
-            child: Row(
+      return Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: screenWidth / 25, vertical: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  child: Text(
-                    'Selected Algorithm: ',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+                Text(
+                  "Time Elapsed: 0.000s",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-                Flexible(
-                  child: CupertinoPicker(
-                    itemExtent: this.widget.parentConstraints.maxHeight / 2,
-                    onSelectedItemChanged: (index) => context
-                        .read<AlgorithmCubit>()
-                        .changeAlgorithmTyoe(
-                            newAlgorithmType: AlgorithmType.values[index]),
-                    scrollController: FixedExtentScrollController(
-                      initialItem:
-                          AlgorithmType.values.indexOf(DEFAULT_ALGORITHM_TYPE),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        switch (state.status) {
+                          case AlgorithmExecutionStatus.initial:
+                            context.read<AlgorithmCubit>().start();
+                            break;
+                          case AlgorithmExecutionStatus.executing:
+                            context.read<AlgorithmCubit>().pause();
+                            break;
+                          case AlgorithmExecutionStatus.paused:
+                            context.read<AlgorithmCubit>().resume();
+                            break;
+                          case AlgorithmExecutionStatus.completed:
+                            break;
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(
+                          state.status == AlgorithmExecutionStatus.executing
+                              ? "Pause"
+                              : "Sort",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
                     ),
-                    children: this._algorithmsSelectionNames,
-                    looping: true,
-                  ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () => context.read<AlgorithmCubit>().reset(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(
+                          "Reset",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          Flexible(
-            child: FloatingActionButton(
-              onPressed: () {
-                switch (state.status) {
-                  case AlgorithmExecutionStatus.initial:
-                    context.read<AlgorithmCubit>().start();
-                    break;
-                  case AlgorithmExecutionStatus.executing:
-                    context.read<AlgorithmCubit>().pause();
-                    break;
-                  case AlgorithmExecutionStatus.paused:
-                    context.read<AlgorithmCubit>().resume();
-                    break;
-                  case AlgorithmExecutionStatus.completed:
-                    break;
-                }
-              },
-              child: Icon(state.status == AlgorithmExecutionStatus.executing
-                  ? Icons.pause
-                  : Icons.play_arrow),
+            SizedBox(
+              height: 16,
             ),
-          ),
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            CupertinoSlidingSegmentedControl(
+                groupValue: this._selectedAlgorithmIndex,
+                children: _algorithmsSelectionNames.asMap(),
+                thumbColor: Colors.blueGrey,
+                onValueChanged: (newIndex) {
+                  this.setState(() {
+                    this._selectedAlgorithmIndex = newIndex;
+                    context.read<AlgorithmCubit>().changeAlgorithmTyoe(
+                        newAlgorithmType: AlgorithmType.values[newIndex]);
+                  });
+                }),
+            SizedBox(
+              height: 24,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Execution Speed',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Min",
-                        style: TextStyle(color: Colors.white),
+                        'Sorting Speed',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
-                      Text('Max', style: TextStyle(color: Colors.white))
+                      Slider(
+                        value: _currentExecutionSpeedSliderValue ??
+                            (MAX_EXEC_DELAY -
+                                DEFAULT_EXEC_DELAY +
+                                MIN_EXEC_DELAY),
+                        min: MIN_EXEC_DELAY.toDouble(),
+                        max: MAX_EXEC_DELAY.toDouble(),
+                        onChanged: (value) {
+                          setState(() {
+                            _currentExecutionSpeedSliderValue = value;
+                          });
+
+                          int microseconds =
+                              (MAX_EXEC_DELAY - value + MIN_EXEC_DELAY).toInt();
+
+                          Duration newDuration =
+                              Duration(microseconds: microseconds);
+
+                          context.read<AlgorithmCubit>().changeExecutionSpeed(
+                                executionSpeed: newDuration,
+                              );
+                        },
+                      ),
                     ],
                   ),
                 ),
-                Slider(
-                  value: _currentExecutionSpeedSliderValue ??
-                      (MAX_EXEC_DELAY - DEFAULT_EXEC_DELAY + MIN_EXEC_DELAY),
-                  label: "Execution Speed",
-                  min: MIN_EXEC_DELAY.toDouble(),
-                  max: MAX_EXEC_DELAY.toDouble(),
-                  onChanged: (value) {
-                    setState(() {
-                      _currentExecutionSpeedSliderValue = value;
-                    });
-
-                    int microseconds =
-                        (MAX_EXEC_DELAY - value + MIN_EXEC_DELAY).toInt();
-
-                    Duration newDuration = Duration(microseconds: microseconds);
-
-                    context.read<AlgorithmCubit>().changeExecutionSpeed(
-                          executionSpeed: newDuration,
-                        );
-                  },
-                ),
-              ],
-            ),
-          ),
-          Flexible(
-            child: FloatingActionButton(
-              child: Text("Reset"),
-              onPressed: () => context.read<AlgorithmCubit>().reset(),
-            ),
-          ),
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'No. of Bars',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16.0, right: 16.0, top: 4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Flexible(
+                  child: Column(
                     children: [
                       Text(
-                        "Min",
-                        style: TextStyle(color: Colors.white),
+                        'Number of Bars',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
-                      Text('Max', style: TextStyle(color: Colors.white))
+                      Slider(
+                        value: _currentBarNumberSliderValue ?? DEFAULT_BARS,
+                        min: MIN_BARS.toDouble(),
+                        max: MAX_BARS.toDouble(),
+                        onChanged: (value) {
+                          setState(() {
+                            this._currentBarNumberSliderValue = value;
+                          });
+
+                          context
+                              .read<AlgorithmCubit>()
+                              .changeNumberOfBars(numberOfbars: value.toInt());
+                        },
+                      ),
                     ],
                   ),
                 ),
-                Slider(
-                  value: _currentBarNumberSliderValue ?? DEFAULT_BARS,
-                  label: "No. of Bars",
-                  min: MIN_BARS.toDouble(),
-                  max: MAX_BARS.toDouble(),
-                  onChanged: (value) {
-                    setState(() {
-                      this._currentBarNumberSliderValue = value;
-                    });
-
-                    context
-                        .read<AlgorithmCubit>()
-                        .changeNumberOfBars(numberOfbars: value.toInt());
-                  },
-                ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       );
     });
   }

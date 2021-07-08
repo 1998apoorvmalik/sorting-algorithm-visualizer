@@ -34,17 +34,20 @@ class AlgorithmCubit extends Cubit<AlgorithmState> {
 
   void _updateAlgorithm() {
     switch (this.state.type) {
-      case AlgorithmType.BubbleSort:
+      case AlgorithmType.Bubble:
         this.algorithm = BubbleSort(cubit: this);
         break;
-      case AlgorithmType.QuickSort:
+      case AlgorithmType.Quick:
         this.algorithm = QuickSort(cubit: this);
         break;
-      case AlgorithmType.InsertionSort:
+      case AlgorithmType.Insertion:
         this.algorithm = InsertionSort(cubit: this);
         break;
-      case AlgorithmType.MergeSort:
+      case AlgorithmType.Merge:
         this.algorithm = MergeSort(cubit: this);
+        break;
+      case AlgorithmType.Selection:
+        this.algorithm = SelectionSort(cubit: this);
         break;
     }
   }
