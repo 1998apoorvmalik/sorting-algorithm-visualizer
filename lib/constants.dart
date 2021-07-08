@@ -8,4 +8,4 @@ const MIN_BARS = 10;
 const DEFAULT_BARS = 125;
 const MAX_BARS = 250;
 
-const DEFAULT_ALGORITHM_TYPE = AlgorithmType.BubbleSort;
+const DEFAULT_ALGORITHM_TYPE = AlgorithmType.Bubble;

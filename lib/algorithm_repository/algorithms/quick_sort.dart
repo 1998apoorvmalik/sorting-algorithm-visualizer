@@ -4,12 +4,16 @@ import 'package:meta/meta.dart';
 
 class QuickSort extends BaseAlgorithm {
   QuickSort({@required AlgorithmCubit cubit}) : super(cubit: cubit);
+  bool algorithmStopped = false;
 
   @override
   Future<void> start() async {
     await this.quickSort(
         this.cubit.state.integers, 0, this.cubit.state.integers.length - 1);
-    super.start();
+
+    if (!algorithmStopped) {
+      super.start();
+    }
   }
 
   Future<void> quickSort(List<int> array, int low, int high) async {
@@ -36,6 +40,7 @@ class QuickSort extends BaseAlgorithm {
         if (await this.stateListener()) {
           this.cubit.update();
         } else {
+          algorithmStopped = true;
           return null;
         }
       }
@@ -48,6 +53,7 @@ class QuickSort extends BaseAlgorithm {
     if (await this.stateListener()) {
       this.cubit.update();
     } else {
+      algorithmStopped = true;
       return null;
     }
     return i;

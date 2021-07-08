@@ -5,4 +5,10 @@ enum AlgorithmExecutionStatus {
   completed,
 }
 
-enum AlgorithmType { BubbleSort, InsertionSort, MergeSort, QuickSort }
+enum AlgorithmType {
+  Bubble,
+  Insertion,
+  Merge,
+  Quick,
+  Selection,
+}
