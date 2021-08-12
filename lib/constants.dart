@@ -1,11 +1,31 @@
 import 'package:sorting_algorithms_visualizer/enums.dart';
 
-const MIN_EXEC_DELAY = 1;
-const DEFAULT_EXEC_DELAY = 50000;
-const MAX_EXEC_DELAY = 100000;
+// Algorithm Option;
+const DEFAULT_ALGORITHM_TYPE = AlgorithmType.Bubble;
+
+const MIN_EXEC_DELAY = 1000;
+const DEFAULT_EXEC_DELAY = 5000;
+const MAX_EXEC_DELAY = 10000;
 
 const MIN_BARS = 10;
 const DEFAULT_BARS = 125;
 const MAX_BARS = 250;
 
-const DEFAULT_ALGORITHM_TYPE = AlgorithmType.Bubble;
+// Panel Expansion Button
+const double kPanelExpansionButtonHeight = 6;
+const double kPanelExpansionButtonWidth = 42;
+const double kPanelExpansionButtonPadding = 8.0;
+
+// (kContentVerticalSpacing / 2) + (kPanelExpansionButtonPadding * 2) + kPanelExpansionButtonHeight
+
+// Panel Component.
+const double kSlidingPanelMinHeight = kContentVerticalSpacing +
+    (4 * kPanelExpansionButtonPadding) +
+    (2 * kPanelExpansionButtonHeight) +
+    kSortButtonHeight;
+const double kSlidingPanelMaxHeight = 360;
+
+// Controller Component.
+const double kContentVerticalSpacing = 24;
+const double kSortButtonHeight = 36;
+const double kButtonWidth = 86;

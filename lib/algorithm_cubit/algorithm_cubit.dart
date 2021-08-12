@@ -49,6 +49,9 @@ class AlgorithmCubit extends Cubit<AlgorithmState> {
       case AlgorithmType.Selection:
         this.algorithm = SelectionSort(cubit: this);
         break;
+      case AlgorithmType.Heap:
+        this.algorithm = HeapSort(cubit: this);
+        break;
     }
   }
 
